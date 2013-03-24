@@ -5,7 +5,7 @@ module BBScan
   class Scanner
     attr_reader :account, :messages
 
-    NEW_FRIEND_SUBJ = "New Friends On BitBiddy.com!"
+    NEW_FRIEND_SUBJ = "New Friends On BitBiddy.com!" #NOTE: TYPO!!!
     NEW_FRIEND_FROM = "no-reply@bitbuddy.com"
 
     # The regexen used are mildly complicated because the message is html
@@ -52,8 +52,26 @@ module BBScan
       @elements ||= [].tap do |els|
         content_blobs.each do |blob|
           Nokogiri::HTML(blob).css("table td p").each do |el|
-            els << el if el.content =~ YOUR_FRIEND_REGEX
+            # grab the hyperlink out of the matched paragraph
+            els << el.css('a').first if el.content =~ YOUR_FRIEND_REGEX
           end
+        end
+      end
+    end
+
+    # Returns a 2D array of friends. Each top-level entry is a 2 element
+    # array where the first element is the friend's name, and the second
+    # element is the link to their profile, eg:
+    # [
+    #   ["Terrance Lee", "http://bitbuddy.com/users/hone02"],
+    #   ["Josh Williams", "http://bitbuddy.com/users/jw"],
+    #   ["Ben Hamill", "http://bitbuddy.com/users/benhamill"],
+    #   ["Brad Fults", "http://bitbuddy.com/users/h3h"]
+    # ]
+    def friends
+      @friends ||= [].tap do |buds|
+        elements.each do |el|
+          buds << [el.content.gsub(/\s+/, ' '), el.attr('href')]
         end
       end
     end
