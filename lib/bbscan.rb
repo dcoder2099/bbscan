@@ -1,5 +1,9 @@
+require 'dotenv'
 require "bbscan/version"
 
-module Bbscan
+# bootstrap .env
+Dotenv.load
+
+module BBScan
   # Your code goes here...
 end

@@ -3,7 +3,7 @@ require File.expand_path('../lib/bbscan/version', __FILE__)
 
 Gem::Specification.new do |gem|
   gem.name          = "bbscan"
-  gem.version       = Bbscan::VERSION
+  gem.version       = BBScan::VERSION
   gem.authors       = ["Daniel Hedrick"]
   gem.email         = ["dcoder2099 at gmail.com"]
   gem.homepage      = ""
@@ -17,5 +17,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'bundler'
   gem.add_dependency 'contextio', '~> 1.3.0'
+  gem.add_dependency 'dotenv', '~> 0.6.0'
   gem.add_development_dependency 'rspec', '~> 2.13.0'
 end
