@@ -18,5 +18,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'bundler'
   gem.add_dependency 'contextio', '~> 1.3.0'
   gem.add_dependency 'dotenv', '~> 0.6.0'
+  gem.add_dependency 'nokogiri', '~> 1.5.9'
   gem.add_development_dependency 'rspec', '~> 2.13.0'
 end
