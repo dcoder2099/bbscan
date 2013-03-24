@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require 'bbscan'
+require 'formatador'
+
+begin
+  scanner = BBScan::Scanner.new
+  friends = scanner.friends
+  name_col_width = scanner.longest_friend_name.length + 2
+  if friends.length > 0
+    Formatador.display_compact_table(friends.map{|x| {name: x[0], profile: x[1]}})
+  else
+    $stdout.puts "No new friends"
+  end
+rescue => e
+  $stderr.puts "Please try again, there was a problem while examining your messages."
+  $stderr.puts "If the problem continues, check your mailbox and ContextIO settings."
+  $stderr.puts e.backtrace.join("\n") if ENV['DEBUG_SCANNER']
+end

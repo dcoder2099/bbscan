@@ -14,6 +14,10 @@ module BBScan
     YOUR_FRIEND_REGEX = /is\s+now\s+your\s+friend/
 
     def initialize
+      unless ENV['CIO_KEY'] and ENV['CIO_SECRET'] and ENV['BBS_MAIL']
+        $stderr.puts "Environment vars CIO_KEY, CIO_SECRET, and BBS_MAIL must be set."
+        return nil
+      end
       @account = ContextIO.new(ENV['CIO_KEY'], ENV['CIO_SECRET']).accounts.where(email: ENV['BBS_MAIL']).first
     end
 
@@ -74,6 +78,14 @@ module BBScan
           buds << [el.content.gsub(/\s+/, ' '), el.attr('href')]
         end
       end
+    end
+
+    def longest_friend_name
+      payload = friends.max do |a, b|
+        a[0].length <=> b[0].length
+      end
+
+      payload[0]
     end
 
   end
