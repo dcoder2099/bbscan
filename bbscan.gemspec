@@ -2,16 +2,20 @@
 require File.expand_path('../lib/bbscan/version', __FILE__)
 
 Gem::Specification.new do |gem|
+  gem.name          = "bbscan"
+  gem.version       = Bbscan::VERSION
   gem.authors       = ["Daniel Hedrick"]
-  gem.email         = ["git@hedmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.email         = ["dcoder2099 at gmail.com"]
   gem.homepage      = ""
+  gem.summary       = %q{Know your BitBuddy.com friends}
+  gem.description   = %q{BBScan is a command-line tool that will scan your mailbox and print a list of your new BitBuddy.com friends.}
 
   gem.files         = `git ls-files`.split($\)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
-  gem.name          = "bbscan"
+  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.require_paths = ["lib"]
-  gem.version       = Bbscan::VERSION
+
+  gem.add_dependency 'bundler'
+  gem.add_dependency 'contextio', '~> 1.3.0'
+  gem.add_development_dependency 'rspec', '~> 2.13.0'
 end
