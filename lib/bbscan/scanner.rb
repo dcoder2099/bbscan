@@ -3,7 +3,7 @@ require 'nokogiri'
 
 module BBScan
   class Scanner
-    attr_reader :account, :messages
+    attr_reader :account, :messages, :cache
 
     NEW_FRIEND_SUBJ = "New Friends On BitBiddy.com!" #NOTE: TYPO!!!
     NEW_FRIEND_FROM = "no-reply@bitbuddy.com"
@@ -19,11 +19,14 @@ module BBScan
         return nil
       end
       @account = ContextIO.new(ENV['CIO_KEY'], ENV['CIO_SECRET']).accounts.where(email: ENV['BBS_MAIL']).first
+      @cache = Cache.new
     end
 
     def scan
-      @messages = [].tap do |x|
-        account.messages.where(subject: NEW_FRIEND_SUBJ, from: NEW_FRIEND_FROM).each{|y| x << y}
+      @messages = [].tap do |msg_ary|
+        account.messages.where(subject: NEW_FRIEND_SUBJ, from: NEW_FRIEND_FROM).each do |msg|
+          msg_ary << msg unless cache.is_message_cached?(msg.message_id)
+        end
       end
     end
 
@@ -36,13 +39,13 @@ module BBScan
     # iterates over the messages and extracts the message body into a
     # string blob that can be processed by nokogiri.
     def content_blobs
-      @content_blobs ||= [].tap do |x|
-        messages.each do |y|
-          y.body_parts.each do |z|
-            if z.html?
-              x << z.content if z.content =~ NEW_FRIENDS_REGEX
+      @content_blobs ||= [].tap do |blobs|
+        messages.each do |msg|
+          msg.body_parts.each do |body|
+            if body.html?
+              blobs << body.content if body.content =~ NEW_FRIENDS_REGEX
             else
-              $stderr.puts "Non-HTML message, message_id: #{y.message_id}"
+              $stderr.puts "Non-HTML message, message_id: #{msg.message_id}"
             end
           end
         end
@@ -78,14 +81,6 @@ module BBScan
           buds << [el.content.gsub(/\s+/, ' '), el.attr('href')]
         end
       end
-    end
-
-    def longest_friend_name
-      payload = friends.max do |a, b|
-        a[0].length <=> b[0].length
-      end
-
-      payload[0]
     end
 
   end

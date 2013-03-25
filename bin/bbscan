@@ -6,7 +6,6 @@ require 'formatador'
 begin
   scanner = BBScan::Scanner.new
   friends = scanner.friends
-  name_col_width = scanner.longest_friend_name.length + 2
   if friends.length > 0
     Formatador.display_compact_table(friends.map{|x| {name: x[0], profile: x[1]}})
   else
