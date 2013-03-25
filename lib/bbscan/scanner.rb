@@ -41,9 +41,13 @@ module BBScan
       @friends ||= [].tap do |buds|
         messages.each do |msg|
           msg.friends.each do |friend|
-            buds << [friend.name, friend.profile_url]
+            unless cache.is_profile_cached?(friend.profile_url)
+              buds << [friend.name, friend.profile_url]
+              cache.add_message_to_cache(msg, friend.profile_url)
+            end
           end
         end
+        cache.save!
       end
     end
 
