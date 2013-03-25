@@ -1,6 +1,14 @@
-# Bbscan
+# BBScan
 
-TODO: Write a gem description
+This is a utility demonstrating the use of the ContexIO API to examine
+emails in an inbox and parse out friend notifications from a
+hypothetical BitBuddy.com coder friends website. Emails of note have a
+subject line of `New Friends On BitBiddy.com!` (sic) and are from
+`no-reply@bitbuddy.com`. Inside those messages there are HTML-formatted 
+sections enumerating the friends that have been added.
+
+This gem installs a command-line tool called `bbparse` that will check
+the mailbox and print out a list of friends.
 
 ## Installation
 
@@ -18,7 +26,24 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```bash
+$ bbscan
+  +---------------+-------------------------------------+
+  | name          | profile                             |
+  +---------------+-------------------------------------+
+  | Terrance Lee  | http://bitbuddy.com/users/hone02    |
+  | Josh Williams | http://bitbuddy.com/users/jw        |
+  | Ben Hamill    | http://bitbuddy.com/users/benhamill |
+  | Brad Fults    | http://bitbuddy.com/users/h3h       |
+  +---------------+-------------------------------------+
+
+$
+```
+
+## TODO
+
+1. Caching
+2. Tests. Tests. More tests.
 
 ## Contributing
 
