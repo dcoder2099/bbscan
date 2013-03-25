@@ -1,5 +1,4 @@
 require 'contextio'
-require 'nokogiri'
 
 module BBScan
   class Scanner
@@ -7,11 +6,6 @@ module BBScan
 
     NEW_FRIEND_SUBJ = "New Friends On BitBiddy.com!" #NOTE: TYPO!!!
     NEW_FRIEND_FROM = "no-reply@bitbuddy.com"
-
-    # The regexen used are mildly complicated because the message is html
-    # and the content of the regex match could have linebreaks internally
-    NEW_FRIENDS_REGEX = /New\s+Friends\s+On\s+BitB[iu]ddy\.com\!/ # NOTE THE TYPO IN THE MESSAGE!
-    YOUR_FRIEND_REGEX = /is\s+now\s+your\s+friend/
 
     def initialize
       unless ENV['CIO_KEY'] and ENV['CIO_SECRET'] and ENV['BBS_MAIL']
@@ -25,45 +19,13 @@ module BBScan
     def scan
       @messages = [].tap do |msg_ary|
         account.messages.where(subject: NEW_FRIEND_SUBJ, from: NEW_FRIEND_FROM).each do |msg|
-          msg_ary << msg unless cache.is_message_cached?(msg.message_id)
+          msg_ary << Message.new(msg) unless cache.is_message_cached?(msg.message_id)
         end
       end
     end
 
     def messages
       @messages ||= self.scan
-    end
-
-    # At the moment, the only kind of messages I have to work with are
-    # HTML-formatted only (no text only or dual-format). So this just
-    # iterates over the messages and extracts the message body into a
-    # string blob that can be processed by nokogiri.
-    def content_blobs
-      @content_blobs ||= [].tap do |blobs|
-        messages.each do |msg|
-          msg.body_parts.each do |body|
-            if body.html?
-              blobs << body.content if body.content =~ NEW_FRIENDS_REGEX
-            else
-              $stderr.puts "Non-HTML message, message_id: #{msg.message_id}"
-            end
-          end
-        end
-      end
-    end
-
-    # Returns an array of nokogiri elements for each of our line matches.
-    # A matched line is one that satisfies the css selector "table td p" and
-    # contains the content "is now your friend".
-    def elements
-      @elements ||= [].tap do |els|
-        content_blobs.each do |blob|
-          Nokogiri::HTML(blob).css("table td p").each do |el|
-            # grab the hyperlink out of the matched paragraph
-            els << el.css('a').first if el.content =~ YOUR_FRIEND_REGEX
-          end
-        end
-      end
     end
 
     # Returns a 2D array of friends. Each top-level entry is a 2 element
@@ -77,8 +39,10 @@ module BBScan
     # ]
     def friends
       @friends ||= [].tap do |buds|
-        elements.each do |el|
-          buds << [el.content.gsub(/\s+/, ' '), el.attr('href')]
+        messages.each do |msg|
+          msg.friends.each do |friend|
+            buds << [friend.name, friend.profile_url]
+          end
         end
       end
     end
