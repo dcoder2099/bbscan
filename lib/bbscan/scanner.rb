@@ -43,7 +43,7 @@ module BBScan
           msg.friends.each do |friend|
             unless cache.is_profile_cached?(friend.profile_url)
               buds << [friend.name, friend.profile_url]
-              cache.add_message_to_cache(msg, friend.profile_url)
+              cache.add_message_to_cache(msg.message_id, friend.profile_url)
             end
           end
         end

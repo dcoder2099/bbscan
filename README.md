@@ -57,10 +57,13 @@ $ bbscan
 $
 ```
 
+The application will cache results between runs so that you don't keep
+seeing the same friends in the list over and over. If you want to bust
+the cache, delete the file `~/.bbscan_cache`.
+
 ## TODO
 
-1. Caching
-2. Tests. Tests. More tests.
+1. Tests. Tests. More tests.
 
 ## Contributing
 
