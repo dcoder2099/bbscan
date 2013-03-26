@@ -37,7 +37,7 @@ module BBScan
           if body.html?
             blobs << body.content if body.content =~ NEW_FRIENDS_REGEX
           else
-            $stderr.puts "Non-HTML message, message_id: #{msg.message_id}"
+            $stderr.puts "Non-HTML message, message_id: #{message_id}"
           end
         end
       end
